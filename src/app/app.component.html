@@ -1,3 +1,76 @@
-<h1>
-  {{title}}
-</h1>
+<div class="wrapper">
+  <div class="nav">
+    <div class="nav-content">
+    <div class="title">GAMES</div>
+    <div href="/" class="link i1" title="Coinflip" routerLink="" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">Coinflip</div>
+    <div href="/" class="link ir" title="Roulette" routerLink="Roulette" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">Roulette</div>
+    <div class="title">Account<span *ngIf="logged_in" class="bal">
+            <i class="fa fa-diamond {{ refreshing ? 'refreshing' : ''}}" (click)="refresh_balance()"></i> <span id="balance">{{ balance }}</span>
+        </span>
+    </div>
+    <div class="link i8" title="My Profile" *ngIf="logged_in" routerLink="Profile" [routerLinkActive]="['active']">My Profile</div>
+    <div class="link i6" title="Deposit" *ngIf="logged_in" routerLink="Deposit" [routerLinkActive]="['active']">Deposit</div>
+    <div class="link i7" title="Shop" *ngIf="logged_in" routerLink="Shop" [routerLinkActive]="['active']">Shop</div>
+    <div class="link i2" title="Affiliates" *ngIf="logged_in" routerLink="Affiliates" [routerLinkActive]="['active']">Affiliates</div>
+    <div class="link ilogin" *ngIf="!logged_in" title="Log In" (click)="login()"><span style="font-size: 9px;">Sign in through</span>
+      STEAM
+    </div>
+    <div class="link ilogout" title="Log Out" *ngIf="logged_in" (click)="logout()">Log Out</div>
+    <div class="title" title="System">System</div>
+    <div class="link if" title="Fair" routerLink="Fair" [routerLinkActive]="['active']">Provably Fair</div>
+    <div class="link i10" title="FAQ" routerLink="FAQ" [routerLinkActive]="['active']">FAQ</div>
+    <div class="link i11" title="Terms of Service" routerLink="TermsOfService" [routerLinkActive]="['active']">Terms of Service</div>
+    <div class="link i12" title="Support" routerLink="Support" [routerLinkActive]="['active']">Support</div>
+    <div class="Hide_SB" title="Toggle Side Menu"></div>
+  </div>
+  </div>
+  <div class="main">
+    <div class="desc" align="center">
+    </div>
+    <div id="main-container" class="container">
+      <div>
+        <div class="logo">
+          <a routerLink="/"><img
+            src="./img/logo-1.png"></a>
+        </div>
+      </div>
+      <div class="loading-site">
+        <div class="loading-coin"></div>
+      </div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div id="message-menu" class="message-menu" style="left: 0px; top: 0px; display: none;">
+    <div>
+      <a href="https://steamcommunity.com/profiles/{{ selected_message.sender.steamid64 }}" class="message-menu-text" target="_blank">View profile</a>
+    </div>
+    <div class="message-menu-text" (click)="SendCoins(selected_message.sender.steamid64)">Send coins</div>
+    <div class="message-menu-text" *ngIf="rank >= 7" (click)="MuteUser(selected_message.sender.id)">Mute User</div>
+    <div class="message-menu-text" *ngIf="rank >= 7" (click)="UnMuteUser(selected_message.sender.id)">UnMute User</div>
+    <div class="message-menu-text" *ngIf="rank >= 7" (click)="RemoveMessage(selected_message.id)">Remove</div>
+  </div>
+  <div class="chatContent">
+    <div class="chatHeader">
+      <span class="badge users-online">
+        <span class="mode" tooltip="Switch between light & dark theme" flow="down" (click)="SwitchTheme()"><i class="icon {{ theme }}"></i> <span *ngIf="theme === 'light'">Light Mode</span> <span *ngIf="theme === 'dark'">Dark Mode</span></span><span class="online"><i class="icon profile"></i> <span>{{ online }}</span> <span > Online</span></span> <i class="fa fa-trash-o" style="cursor: pointer; color: red" *ngIf="rank >= 7" (click)="ClearChat()"></i> </span>
+    </div>
+    <div class="chatPanel">
+      <div class="chat-body notranslate" (scroll)="ChatScroll($event)" #chat>
+        <div *ngFor="let message of Chat_Messages" class="chat-msg {{ message.sender.id === 0 ? 'system' : ''}}" style="text-align: left; margin-bottom: 10px;">
+          <img class="chat-img rounded" src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatarshttps://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ message.sender.avatar }}" style="float:left;margin-right:5px;cursor: pointer!important;" (click)="SelectUser($event, message)">
+          <div class="message-head">
+            <a *ngIf="message.sender.id === 0 || message.sender.rank === 10" target="_blank">{{ message.sender.name | truncate : 17 : '.' }}</a><a *ngIf="message.sender.id !== 0 && message.sender.rank !== 10" href="https://steamcommunity.com/profiles/{{ message.sender.steamid64 }}" target="_blank">{{ message.sender.name | truncate : 17 : '.' }}</a> <i class="fa fa-check-circle verified" *ngIf="message.sender.verified" style="color: deepskyblue;" title="Verified User"></i> <i class="fa {{ message.sender.rank | rankicon }}" *ngIf="message.sender.rank > 2" [ngStyle]="{color: message.sender.rank | rankcolor}" title="{{ message.sender.rank | rankname }}"></i>
+            <div class="message-text">
+            {{ message.text | truncate : 200 : '.' }}
+          </div>
+        </div>
+      </div>
+      </div>
+      <div id="scrollNotification" class="scrollNotification {{ chatDown === true ? 'visible' : ''}}" (click)="ChatScrollDown()"></div>
+      <div class="form-group" id="chatForm" name="chatForm" style="margin-bottom:0;">
+        <input autocomplete="off" class="input-dark" id="chatMessage" maxlength="200" placeholder="{{logged_in === true ? 'Type here...' : 'Please login to use chat'}}" type="text" style=" padding: 8px; width: 100%; border-radius: 5px;" [(ngModel)]="Chat_Input" (keypress)="SendMessage($event)" [disabled]="!logged_in">
+        <div style="color: red; text-align: center" *ngIf="Error != null">{{ Error }}</div>
+      </div>
+    </div>
+  </div>
+</div>

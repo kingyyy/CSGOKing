@@ -1,0 +1,81 @@
+
+<div class="box-redeem" *ngIf="!affiliates_data.redeemed">
+  <div style="width:70%;margin-left:auto;margin-right:auto;padding-top:40px;margin-bottom:20px;padding-bottom:40px;">
+    <div style="padding:5px;font-family:Roboto;margin-bottom:15px;"><h2>Redeem Code</h2> Enter your invition code to redeem free bonus. *You can redeem once only.
+    </div>
+
+    <input type="text" id="redeem_code" placeholder="Code..." [(ngModel)]="redeem_affiliate_code" style="width:530px" class="input-dark" required>
+    <button type="button" id="redeem" class="apply-btn" (click)="redeem_code()"><i class='{{ refreshing_redeem == true ? "fa fa-refresh fa-spin" : ""}} {{ success_redeem == true ? "fa fa-check" : ""}}'></i>{{ refreshing_redeem != true && success_redeem != true ? "Apply" : ""}}</button>
+    <div *ngIf="Error_redeem !== null" class="message-area calculator-fail">
+      {{ Error_redeem }}
+    </div>
+  </div>
+</div>
+<div class="box-referral">
+  <div style="width:70%;margin-left:auto;margin-right:auto;padding-top:40px;margin-bottom:20px;padding-bottom:40px;">
+    <div style="padding:5px;font-family:Roboto;margin-bottom:15px;"><h2>Your referral code</h2> Invite playes to join our site using your code. they'll get free coins as a signup bonus and you'll earn an invite bonus and percentage of what they spend for life.
+    </div>
+
+    <input type="text" id="referral_code" placeholder="Code..." [(ngModel)]="affiliate_code" style="width:530px" class="input-dark" required>
+    <button type="button" id="referral" class="apply-btn" (click)="update_code()"><i class='{{ refreshing == true ? "fa fa-refresh fa-spin" : ""}} {{ success == true ? "fa fa-check" : ""}}'></i>{{ refreshing != true && success != true ? "Change" : ""}}</button>
+    <div *ngIf="Error !== null" class="message-area calculator-fail">
+      {{ Error }}
+    </div>
+  </div>
+</div>
+<div class="box-history">
+  <div style="padding:10px;">
+    <div style="width:100%;height:90px;">
+      <div class="history-el">
+
+        <div class="history-elem">
+          <span id="wager">{{ affiliates_data.total_affiliates }}</span>
+          <br>
+          <small style="font-weight:bold;font-size:14px;color:#bbb">Rank Progress</small>
+        </div>
+
+      </div>
+      <div class="history-el">
+
+        <div class="history-elem">
+          <span id="winnings"><i class="fa fa-diamond" style="margin-right: 3px;color: #2ECC71;"></i>{{ affiliates_data.total_earnings }}</span>
+          <br>
+          <small style="font-weight:bold;font-size:14px;color:#bbb">Total Earnings</small>
+        </div>
+
+      </div>
+      <div class="history-el">
+        <div class="history-elem">
+          <span id="profit">{{ affiliates_data.current_rank }}</span>
+          <br>
+          <small style="font-weight:bold;font-size:14px;color:#bbb">Current Rank</small>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<div class="history-table">
+  <div style="width:100%;">
+
+    <table class="history-table-head">
+      <tbody>
+      <tr>
+        <td width="52%" class="th-type" style="width: 15%;text-align: center;">Rank</td>
+        <td width="52%" class="th-type" style="width: 40%;text-align: center;"><i class="fa fa-diamond" style="margin-right: 3px;color: #2ECC71;"></i>Bonus to you</td>
+        <td width="52%" class="th-type" style="width: 40%;text-align: center;"><i class="fa fa-diamond" style="margin-right: 3px;color: #2ECC71;"></i>Bonus to users</td>
+      </tr>
+      </tbody>
+    </table>
+    <table class="history-table-body">
+      <tbody>
+      <tr *ngFor="let rank of ranks" class="{{ rank.is_cureent == true ? 'current': ''}}">
+        <td width="52%" class="th-type" style="width: 15%;text-align: center;">{{ rank.rank }}</td>
+        <td width="52%" class="th-type" style="width: 40%;text-align: center;">{{ rank.bonus_get.toFixed(2) }}</td>
+        <td width="52%" class="th-type" style="width: 40%;text-align: center;">{{ rank.bonus_give.toFixed(2) }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

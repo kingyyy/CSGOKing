@@ -1,0 +1,124 @@
+<div id="past-queue-menu-wrapper">
+  <div id="past-queue-menu">
+    <div class="past-queue-menu-subtitle">Hash</div>
+    <div class="past-queue-menu-description">{{ selected_roll.hash }}</div>
+    <div class="past-queue-menu-subtitle">Salt</div>
+    <div class="past-queue-menu-description">{{ selected_roll.salt }}</div>
+    <div class="past-queue-menu-subtitle">Random</div>
+    <div class="past-queue-menu-description">{{ selected_roll.random }}</div>
+  </div>
+  <div id="past-queue-menu-triangle" style="border-bottom: 8px solid rgb(71, 255, 125);">
+  </div>
+</div>
+<div class="roulette">
+  <div class="controls {{ logged_in !== true}}" >
+    <div class="color-select">
+      <button class="btn-multi {{ selected_side === 'terrorist' ? 'active' : '' }}" (click)="select_side('terrorist')" tooltip="2X" flow="down">
+        <img class="t-select-button" src="/img/t.png">
+      </button>
+      <button class="btn-multi {{ selected_side === 'wild' ? 'active' : '' }}" (click)="select_side('wild')" tooltip="14X" flow="down">
+        <img class="wild-select-button" src="/img/coin-up.png">
+      </button>
+      <button class="btn-multi {{ selected_side === 'counter-terrorist' ? 'active' : '' }}" (click)="select_side('counter-terrorist')" tooltip="2X" flow="down">
+        <img class="ct-select-button" src="/img/ct.png">
+      </button>
+    </div>
+    <div class="inputs-area">
+      <div class="buttons">
+        <input id="minesBet" class="value" [ngModel]="amount" (keypress)="_keyPress($event)" (blur)="updateBlur($event)" placeholder="Your amount..." />
+        <div class="button" (click)="UpdateAmount('clear')">Clear</div>
+        <div class="button" (click)="UpdateAmount('last')">Last</div>
+        <div class="button" (click)="UpdateAmount('0.10')"><span>+</span>0.10</div>
+        <div class="button" (click)="UpdateAmount('1')"><span>+</span>1</div>
+        <div class="button" (click)="UpdateAmount('10')"><span>+</span>10</div>
+        <div class="button" (click)="UpdateAmount('1/2')">1<span>/</span>2</div>
+        <div class="button" (click)="UpdateAmount('x2')"><span>X</span>2</div>
+        <div class="button" (click)="UpdateAmount('max')">Max</div>
+      </div>
+    </div>
+    <div class="play" style=" display: flex; flex-wrap: wrap; ">
+      <button class="btn-play" (click)="PlaceBet()" [disabled]="placing"><i class="fa fa-spin fa-refresh" *ngIf="placing"></i>{{ placing === true ? '' : 'Deposit'}}</button>
+      <div *ngIf="Error !== null" class="message-area calculator-fail">
+        {{ Error }}
+      </div>
+    </div>
+  </div>
+
+  <div class="spinner">
+    <div class="inner">
+      <div class="roulette-wheel-outer">
+        <div class="rolling {{ winner_circle == true ? 'winner_circle' : ''}}">
+          <div class="rolling-inner" >
+            Connecting...
+          </div>
+        </div>
+        <div class="roulette-wheel">
+          <div class="fade-right"></div>
+          <div class="fade-left"></div>
+          <div class="roulette-caret-down-left"><i class="fa fa-caret-down" aria-hidden="true"></i></div>
+          <div class="roulette-caret-up-right"><i class="fa fa-caret-up" aria-hidden="true"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="balance-latest">
+      <div class="latest">
+      <div *ngFor="let roll of last_rolls" class="{{ roll.roll_number < 46.67 ? 't' : ''}}{{ roll.roll_number >= 46.67 && roll.roll_number < 53.33 ? 'wild' : ''}}{{ roll.roll_number >= 53.33 ? 'ct' : ''}}-last-color last" style="cursor: pointer;" (click)="HistoryClick($event, roll.roll_hash, roll.roll_salt, roll.roll_number)"></div>
+    </div>
+  </div>
+  <div class="roulette-info">Round hash: {{ round_hash }}</div>
+  <div class="bets">
+    <div class="bet-box t-bet">
+      <div class="bet-info">
+        <div class="bet-label"><img class="t-select-button-small" src="/img/t.png"> Terrorists</div>
+        <div class="total-bet"><span class="t-total total-bet-amount {{ winner_side === 't' || winner_side === null ? '' : 'lose' }}"><i class="fa fa-diamond" style="color:#47FF7D"></i> {{ winner_side === 't' ? (_totals.t * 2).toFixed(2) : _totals.t.toFixed(2) }}</span></div>
+      </div>
+      <div class="player-bets">
+        <div class="player-bet" *ngFor="let bet of _bets.t | orderBy: 'amount'">
+          <div class="user {{ my_id === bet.player.id ? 'my-bet' : ''}}">
+            <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ bet.player.avatar }}">{{ bet.player.name }}
+          </div>
+          <div class="amount {{ winner_side === 't' || winner_side === null ? '' : 'lose' }}">
+            <i class="fa fa-diamond" style="margin-right: 5px;color: #2ECC71;"></i>{{ winner_side === 't'  ? (bet.amount * 2).toFixed(2) : bet.amount.toFixed(2) }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bet-box wild-bet">
+      <div class="bet-info">
+        <div class="bet-label"><img class="wild-select-button-small" src="/img/coin-up.png"> Wild</div>
+        <div class="total-bet"><span class="wild-total total-bet-amount {{ winner_side === 'wild' || winner_side === null ? '' : 'lose' }}"><i class="fa fa-diamond" style="color:#47FF7D"></i> {{ winner_side === 'wild' ? (_totals.wild * 14).toFixed(2) : _totals.wild.toFixed(2) }}</span></div>
+      </div>
+      <div class="player-bets">
+        <div class="player-bet" *ngFor="let bet of _bets.wild | orderBy: 'amount'">
+          <div class="user {{ my_id === bet.player.id ? 'my-bet' : ''}}">
+            <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ bet.player.avatar }}">{{ bet.player.name }}
+          </div>
+          <div class="amount {{ winner_side === 'wild' || winner_side === null ? '' : 'lose' }}">
+            <i class="fa fa-diamond" style="margin-right: 5px;color: #2ECC71;"></i>{{ winner_side === 'wild'  ? (bet.amount * 14).toFixed(2) : bet.amount.toFixed(2) }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bet-box ct-bet">
+      <div class="bet-info">
+        <div class="bet-label"><img class="ct-select-butto-small" src="/img/ct.png"> Counter Terrorists</div>
+        <div class="total-bet"><span class="ct-total total-bet-amount  {{ winner_side === 'ct' || winner_side === null ? '' : 'lose' }}"><i class="fa fa-diamond" style="color:#47FF7D"></i> {{ winner_side === 'ct' ? (_totals.ct * 2).toFixed(2) : _totals.ct.toFixed(2) }}</span></div>
+      </div>
+      <div class="player-bets">
+        <div class="player-bet" *ngFor="let bet of _bets.ct | orderBy: 'amount'">
+          <div class="user {{ my_id === bet.player.id ? 'my-bet' : ''}}">
+            <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ bet.player.avatar }}">{{ bet.player.name }}
+          </div>
+          <div class="amount {{ winner_side === 'ct' || winner_side === null ? '' : 'lose' }}">
+            <i class="fa fa-diamond" style="margin-right: 5px;color: #2ECC71;"></i>{{ winner_side === 'ct'  ? (bet.amount * 2).toFixed(2) : bet.amount.toFixed(2) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var _soundOn = false;
+</script>

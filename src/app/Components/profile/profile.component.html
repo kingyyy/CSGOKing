@@ -1,0 +1,73 @@
+<div class="trade-box">
+  <div style="width:70%;margin-left:auto;margin-right:auto;padding-top:40px;margin-bottom:20px;padding-bottom:40px;">
+    <div class="trade-box-text">
+      <strong>TRADE LINK</strong> You do not know where to find it? <a target="_blank" href="http://steamcommunity.com/profiles/76561198095946160/tradeoffers/privacy#trade_offer_access_url" style="color:#6afc68"><strong>CLICK HERE</strong></a>
+    </div>
+    <input type="text" id="tradelink" [(ngModel)]="trade_link" placeholder="TRADE LINK" style="width:530px" class="input-dark" required>
+    <button type="button" id="applytradelink" class="apply-btn" (click)="update_trade_link()"><i class='{{ refreshing == true ? "fa fa-refresh fa-spin" : ""}} {{ success == true ? "fa fa-check" : ""}}'></i>{{ refreshing != true && success != true ? "Apply" : ""}}</button>
+    <div style="color: red; text-align: center" *ngIf="Error != null">{{ Error }}</div>
+  </div>
+</div>
+<div class="box-history">
+  <div style="padding:10px;">
+    <div style="width:100%;height:90px;">
+      <div class="history-el">
+
+        <div class="history-elem">
+          <span id="wager">{{ profile_data.wager }}</span>
+          <br>
+          <small style="font-weight:bold;font-size:14px;color:#bbb">WAGER</small>
+        </div>
+
+      </div>
+      <div class="history-el">
+
+        <div class="history-elem">
+          <span id="winnings" [ngStyle]="{'color': profile_data.winnings > 0 ? '#45f439' : '#F44336'}">{{ profile_data.winnings }}</span>
+          <br>
+          <small style="font-weight:bold;font-size:14px;color:#bbb">WINNINGS</small>
+        </div>
+
+      </div>
+      <div class="history-el">
+
+        <div class="history-elem">
+          <span id="profit" [ngStyle]="{'color': profile_data.profit > 0 ? '#45f439' : '#F44336'}">{{ profile_data.profit }}</span>
+          <br>
+          <small style="font-weight:bold;font-size:14px;color:#bbb">PROFIT</small>
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<div class="history-table">
+  <div style="width:100%;">
+
+    <table class="history-table-head">
+      <tbody>
+      <tr>
+        <td width="52%" class="th-type" style="width: 117px;">#</td>
+        <td width="52%" class="th-type" style="width: 105px;">Type</td>
+        <td width="52%" class="th-type" style="width: 100px;">Mode</td>
+        <td width="22%" class="th-amount">Amount</td>
+        <td width="8%" class="th-date" style=" margin-right: 115px!important; ">Date</td>
+      </tr>
+      </tbody>
+    </table>
+    <table class="history-table-body">
+      <tbody>
+      <tr *ngFor="let game of profile_data.history">
+        <td width="52%" class="th-type" style="width: 117px;"><a (click)="opengame(game.uuid)" style="color: #3EEA6F !important;cursor: pointer;">#{{ game.id }}</a>
+        </td>
+        <td width="52%" class="th-type" style="width: 105px;">{{ game.type }}</td>
+        <td width="52%" class="th-type" style="width: 100px;">{{ game.mode }}</td>
+        <td width="22%" class="th-amount" [ngStyle]="{'color': game.mode === 'Winning' ? '#45f439' : (game.mode === 'Expires' ? '#45f439' : '#F44336')}">{{ game.amount }}</td>
+        <td width="8%" class="th-date" style="width: 140px;font-size: 10px;">{{ game.date }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

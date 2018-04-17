@@ -1,0 +1,157 @@
+      <div style="display: inline-flex;width: 100%;">
+        <section id="game-list-section" style="width: 100%;">
+          <div class="box" style="padding-bottom: 0;">
+            <div class="box-padded-header">
+              <div class="box-header pull-left">
+                <span class="">Active </span><span class="">Games</span>
+              </div>
+              <div class="semi-bold box-header pull-right"  *ngIf="logged_in">
+                <div id="create-game-action" class="side-action pull-left" (click)="OnCreate()"><i class="fa fa-pencil" aria-hidden="true"></i>
+                  Create
+                </div>
+                <div id="refresh-action" class="side-action pull-left" (click)="OnRefresh()"><i class="fa fa-refresh {{ refreshing == true ? 'fa-spin': ''}}" aria-hidden="true"></i>
+                  Refresh
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+            <table id="game-area-table">
+              <tr *ngFor="let game of gameslist | orderBy: 'amount'" style="cursor:pointer;">
+                <td class="game-left" (click)="GameClick(game.id)">
+                  <img class="game-image" src="http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/{{ game.player1.avatar }}"><span class="game-name very-bold">{{ game.player1.name | truncate : 17 : '.' }}</span>
+                </td>
+                <td class="game-middle" (click)="Join_Game_modal(game)">
+                  <span class="game-status {{ game.player2 == null ? 'green-text' : 'grey-text'}}">{{ game.player2 == null ? 'Joinable' : 'In Progress'}}</span>
+                </td>
+                <td class="game-right" (click)="GameClick(game.id)">
+                  <span class="game-total-amount"><i class="fa fa-diamond" style="color: #2ecc71;"></i> {{ game.amount.toFixed(2) }}</span><img class="display-coin" src="img/{{ game.player1.side }}.png">
+                </td>
+              </tr>
+            </table>
+            <div class="modal fade" id="createGame">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <div class="box-header pull-left"
+                         style="border-bottom-color: #3EEA6F;    margin: 0 auto;    display: block;    width: 143px;    margin-bottom: 20px;    float: none !important;">
+                      <span class="">Select</span> <span class="">a Team</span>
+                    </div>
+                    <div class="chose-team-m">
+                      <div class="mmodal-left">
+                        <div class="c-modal-img">
+                          <img src="img/terrorist.png" class="it_command {{ selected_side == 'terrorist' ? 'active': ''}}" (click)="OnSelectSide('terrorist')">
+                        </div>
+                        <p class="c-t-name">
+                          Terrorist
+                        </p>
+                        <p class="c-t-proc">
+                          0 - 49%
+                        </p>
+                      </div>
+                      <div class="mmodal-right">
+                        <img src="img/counter-terrorist.png" class="it_command {{ selected_side == 'counter-terrorist' ? 'active': ''}}" (click)="OnSelectSide('counter-terrorist')">
+                        <p class="c-t-name">
+                          Counter Terrorist
+                        </p>
+                        <p class="c-t-proc">
+                          50 - 100%
+                        </p>
+                      </div>
+                      <div class="clear-modal"></div>
+                      <div id="slider-range-max"
+                           class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
+                                                <span tabindex="0"
+                                                      class="ui-slider-handle ui-corner-all ui-state-default"
+                                                      style="left: 66.6667%;"></span>
+                      </div>
+
+                      <div class="udr-sp">
+                        <div class="mmodal-left2">
+                          <div class="brtt">
+                            <i class="fa fa-diamond" aria-hidden="true"></i> <span class="balance">0.50</span>
+                          </div>
+                        </div>
+                        <div class="mmodal-left2 zdcv">
+                          <div class="brtt">
+                            <i class="fa fa-diamond" aria-hidden="true"></i> <input type="text" id="amount" [ngModel]="amount" (keypress)="_keyPress($event)" (blur)="updateBlur($event)">
+                          </div>
+                        </div>
+                        <div class="mmodal-right2">
+                          <div class="brtt">
+                            <i class="fa fa-diamond" aria-hidden="true"></i> <span
+                            class="balance">{{ max_amount }}</span>
+                          </div>
+                        </div>
+                        <div class="clear-modal"></div>
+                      </div>
+                      <input type="submit" value="create game" id="create" (click)="OnCreateGame()" class="inp-mm">
+                      <div style="color: red; text-align: center" *ngIf="Error != null">{{ Error }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="joinGame">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <div class="box-header pull-left"
+                         style="border-bottom-color: #3EEA6F;    margin: 0 auto;    display: block;    width: 107px;    margin-bottom: 20px;    float: none !important;">
+                      <span class="">Join</span> <span class="">Game</span>
+                    </div>
+                    <div class="chose-team-m">
+                      <div class="mmodal-left">
+                        <div class="c-modal-img">
+                          <img src="img/terrorist.png" id="join-terrorist" class="{{ selected_game.player1.side !== 'terrorist' ? 'active' : ''}}">
+                        </div>
+                        <p class="c-t-name">
+                          Terrorist
+                        </p>
+                        <p class="c-t-proc">
+                          0 - 49%
+                        </p>
+                      </div>
+                      <div class="mmodal-right">
+                        <img src="img/counter-terrorist.png" id="join-counter-terrorist" class="{{ selected_game.player1.side !== 'counter-terrorist' ? 'active' : ''}}">
+                        <p class="c-t-name">
+                          Counter Terrorist
+                        </p>
+                        <p class="c-t-proc">
+                          50 - 100%
+                        </p>
+                      </div>
+                      <div class="clear-modal"></div>
+                      <input type="submit" (click)="Join_Game(selected_game)" value="join game" id="join" class="inp-mm">
+                      <div style="color: red; text-align: center" *ngIf="Error != null">{{ Error }}</div>
+                      <div style="color: #6b7e87; text-align: right">Expires at {{ timeConverter(selected_game.expires_at) }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div id="odds-box" class="box" style="padding-bottom: 23px;margin-left: 15px;width: 12%;height: 100%;">
+          <div class="box-padded-header" style="margin-bottom: 10px;">
+            <div class="semi-bold box-header" style="margin: 0 auto;">
+              <span class="very-bold">Odds</span>
+            </div>
+          </div>
+          <table id="table-odds">
+            <tr>
+              <th>
+                <img src="img/terrorist.png" data-toggle="tooltip" class="odds-coin knob"
+                     id="terrorist-wheel" data-width="58" data-height="58" data-thickness="0.12"
+                     data-bgColor="#272d36" data-fgColor="#3EEA6F" data-readOnly="true"/>
+              </th>
+            </tr>
+            <tr style="padding-top:10px;">
+              <th style="padding-top: 25px;">
+                <img src="img/counter-terrorist.png" data-toggle="tooltip" class="odds-coin knob"
+                     id="counterterrorist-wheel" data-width="58" data-height="58" data-thickness="0.12"
+                     data-bgColor="#272d36" data-fgColor="#3EEA6F" data-readOnly="true"/>
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>

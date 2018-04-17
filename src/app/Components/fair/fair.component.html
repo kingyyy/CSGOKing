@@ -1,0 +1,76 @@
+<section id="settings-area-section" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <div class="settings box squished-box">
+    <div class="box-padded-header">
+      <div class="semi-bold box-header" style="margin: 0 auto;">
+        <span class="very-bold">Fair System</span>
+      </div>
+    </div>
+    <br>
+    <h4 style="color:red; font-size: 16px; text-align: center;">THIS MECHANISM WORKS FOR BOTH COIN FLIP AND ROULETTE!</h4>
+    <p>
+    To keep our rounds fair and truly random, we utilize the provably fair system.
+
+      <br>
+      <br>
+
+      At the beginning of a round, the server generates a salt, and a winning ticket to identify the round. These two elements are concatenated to create a round hash as follows:
+      <br>
+      <br>
+      <span class="very-bold" style="font-size: 16px;">Example</span>
+      <br>
+      <strong class="semi-bold">Salt</strong> : bDJpd0VVRC9hb3dqdG1sdGhKbFBtdz09
+      <br>
+      <strong class="semi-bold">Winning Ticket (Random)</strong> : 22.51806220891106
+      <br>
+      <strong class="semi-bold">Hash</strong> : sha256([Salt]:[Ticket])
+      <br>
+      <br>
+      When the round is complete, the server will choose a winner using the winning ticket which are choosed randomly.
+      <br>
+      <br>
+      After choosing a winner, the server will reveal the round's salt and winning ticket allowing you to back calculate the other quantities as necessary.
+      <br>
+      <br>
+      To ensure this system is working properly, we have implemented a client side calculator for you to verify any completed round.
+    </p>
+  </div>
+</section>
+
+<section id="calculator" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  <div id="middle" class="col-lg-6 col-md-12 col-sm-12 col-xs-12" style="width:100%">
+    <div class="settings box squished-box">
+      <div class="box-padded-header" style="margin-bottom: 10px;">
+        <div class="semi-bold box-header" style="margin: 0 auto;">
+          <span class="very-bold">Calculator</span>
+        </div>
+      </div>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <div class="col-sm-12 calculator-input">
+            <label for="hash">Round Hash</label>
+            <input id="hash" [(ngModel)]="round_hash" placeholder="" name="hash" type="text" class="form-control ember-text-field">
+          </div>
+          <div class="col-sm-12 calculator-input">
+            <label for="salt">Round Salt</label>
+            <input id="salt" [(ngModel)]="round_salt" placeholder="" name="salt" type="text" class="form-control ember-text-field">
+          </div>
+          <div class="col-sm-12 calculator-input">
+            <label for="tickets">Winning Ticket</label>
+            <input id="tickets" [(ngModel)]="round_ticket" placeholder="" name="tickets" type="text" class="form-control ember-text-field">
+          </div>
+        </div>
+        <div *ngIf="Error !== null" class="message-area calculator-fail">
+          {{ Error }}
+        </div>
+        <div *ngIf="Success !== null" class="message-area calculator-success">
+          {{ Success }}
+        </div>
+        <div style="text-align: center">
+          <button (click)="Calculate()" class="btn btn-default popup-button btn-success" style=" margin-top: 15px; ">
+            Calculate
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

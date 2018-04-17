@@ -1,0 +1,130 @@
+<div class="withdraw-container" style="margin-top:35px;">
+  <div class="alert-danger" *ngIf="error != null">{{ error }}.</div>
+  <div style="overflow:hidden;margin-top:10px;margin-bottom:-10px;width:1000px;margin-left:auto;margin-right:auto;height:80px;line-height:80px;font-family:Open Sans;font-weight:bold;">
+    <div style="float:right;margin-right:15px;">
+      <select id="filter" (change)="on_change($event.target.value)">
+        <option value="high">High &gt; Low</option>
+        <option value="low">Low &gt; High</option>
+      </select>
+    </div>
+    <div style="float:right;margin-left:10px;">
+      <input type="text" id="query" value="" [(ngModel)]="search_text" (keyup)="search_for_item()" placeholder="Search in the store...">
+    </div>
+  </div>
+  <div class="items-container" style="overflow:hidden;width:1100px;padding-bottom:30px">
+    <div class="item_box" *ngFor="let item_id of objectKeys(withdraw_items)"  (click)="withdraw_select(item_id)">
+      <div class="item-inside">
+        <span class="store-name">{{ withdraw_items[item_id].full_name }}</span>
+        <img class="store-img" src="https://steamcommunity-a.akamaihd.net/economy/image/{{ withdraw_items[item_id].image }}">
+        <span class="store-price">
+			    <i class="fa fa-diamond" style=" margin-right: 5px;"></i>{{ withdraw_items[item_id].price.toFixed(2) }}
+		    </span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="OfferSent" *ngIf="selected_item_id != null">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="box-header pull-left"
+             style="border-bottom-color: #3EEA6F;    margin: 0 auto;    display: block;    width: 105px;    margin-bottom: 20px;    float: none !important;">
+          <span class="">Offer</span> <span class="">Sent</span>
+        </div>
+        <div class="offer-dialog">
+          <div class="mmodal-center">
+            <p class="offer_text">
+              The Trade offer has been sent to your steam account with code
+            </p>
+            <p class="offer_code">
+              {{ offer_code }}
+            </p>
+            <p class="offer_sum" style="color:red!important;">
+              <i class="fa fa-diamond" style="margin-right: 5px;"></i><span id="offer_sum">{{ withdraw_items[selected_item_id].price.toFixed(2) }}</span>
+            </p>
+          </div>
+          <div class="clear-modal"></div>
+          <button class="inp-mm" id="accept_url" (click)="open_offer_on_browser(offer_id)" target="_blank" type="submit">Open in browser</button>
+          <button class="inp-mm" id="accept_steam" (click)="open_offer_on_steam(offer_id)" type="submit">Open in steam</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="Item_Comfirm" *ngIf="selected_item_id != null">
+  <div class="modal-inner">
+    <div class="modal-content">
+      <div class="header">
+        {{ withdraw_items[selected_item_id].full_name.split('(')[0] }}
+      </div>
+      <div class="inner item-infoo">
+        <div class="ui two column stackable grid" style=" padding-bottom: 5px; ">
+          <div class="column img">
+            <img src="https://steamcommunity-a.akamaihd.net/economy/image/{{ withdraw_items[selected_item_id].image }}">
+            <div class="stickers">
+              <img *ngFor="let sticker of withdraw_items[selected_item_id].stickers" src="{{ sticker.sticker_image }}" title="{{ sticker.sticker_name }}" class="sticker">
+            </div>
+            <div class="float" *ngIf="withdraw_items[selected_item_id].float !== '0'">
+              <i class="caret down icon" [ngStyle]="{ 'left': withdraw_items[selected_item_id].float * 100 + '%' }" title="{{ withdraw_items[selected_item_id].float }}"></i>
+              <div class="float-bar">
+                <div class="bar fn"></div>
+                <div class="bar mw"></div>
+                <div class="bar ft"></div>
+                <div class="bar ww"></div>
+                <div class="bar bs"></div>
+              </div>
+            </div>
+          </div>
+          <div class="column meta">
+            <table>
+              <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Value</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!---->
+              <tr>
+                <td>Price</td>
+                <td><small><i class="fa fa-diamond"></i> </small>{{ withdraw_items[selected_item_id].price }}</td>
+              </tr>
+              <tr>
+                <td>StatTrak™</td>
+                <td>{{ withdraw_items[selected_item_id].full_name.toLowerCase().indexOf('stattrak') !== -1 ? 'Yes' : 'No' }}</td>
+              </tr>
+              <tr>
+                <td>Condition</td>
+                <td>{{ withdraw_items[selected_item_id].exterior !== null ? withdraw_items[selected_item_id].exterior.replace('-', ' ') : 'n/a' }}</td>
+              </tr>
+              <tr *ngIf="withdraw_items[selected_item_id].float !== '0'">
+                <td>Float</td>
+                <td>{{ withdraw_items[selected_item_id].float }}</td>
+              </tr>
+              <!--tr>
+                <td>Phase</td>
+                <td>Sapphire</td>
+              </tr-->
+              <tr>
+                <td>Nametag</td>
+                <td>{{ withdraw_items[selected_item_id].nametag !== null ? withdraw_items[selected_item_id].nametag : 'No' }}</td>
+              </tr>
+              <tr>
+                <td>Stickers</td>
+                <td>{{ withdraw_items[selected_item_id].stickers.length > 0 ? 'Yes' : 'No' }}</td>
+              </tr>
+              <tr>
+                <td><button class="inspect-btn" (click)="inspect_item()" style=" padding: 3px 10px;font-size: 15px!important;">Inspect</button></td>
+                <td><button class="inspect-btn" (click)="inspect_item_metjm()" style=" padding: 3px 10px;font-size: 15px!important;">Inspect (metjm)</button></td>
+              </tr>
+              </tbody>
+            </table>
+            <button class="inp-mm" (click)="withdraw_item()" style="padding: 3px 0px;font-size: 15px!important;"><i class="fa fa-refresh fa-spin" *ngIf="withdraw_loading === true"></i>{{ withdraw_loading !== true ? 'Withdraw' : ''}}</button>
+            <button class="close-btn" (click)="toggle_item_modal()" style=" padding: 3px 10px;font-size: 15px!important;">Close</button>
+            <div style="color: red; text-align: center" *ngIf="w_Error != null">{{ w_Error }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

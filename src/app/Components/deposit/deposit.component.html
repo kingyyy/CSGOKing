@@ -1,0 +1,86 @@
+<div class="deposit-container" style="margin-top:35px;">
+  <div class="alert-danger" *ngIf="error != null">{{ error }}.</div>
+  <div class="deposit-left">
+    <div class="box-padded-header">
+      <div class="semi-bold box-header" style="margin: 0 20px;padding-bottom: 1px;padding-top: 20px;">
+        <span class="very-bold">Inventory</span>
+      </div>
+    </div><button class="refreshbtn" (click)="refresh_items()"><i aria-hidden="true" class="fa fa-refresh {{ refreshing == true ? 'fa-spin' : ''}}"></i></button>
+    <div style="overflow:hidden;margin-left:20px;width: 100%;">
+      <input id="filter" placeholder="Search..." [(ngModel)]="search_text" (keyup)="search_for_item()" style="width:93%;outline:none;padding:10px 15px;font-weight:bold;" type="text">
+    </div>
+    <div class="ostyle">
+      <div class="slot-group noselect" id="left">
+        <div class="left-text" style="display:block;font-family:Open Sans;font-size:20px;color:#616161;text-align:center;width:450px">
+          <div class="loading-site-inv" *ngIf="objectKeys(user_items).length <= 0">
+            <div class="loading-coin"></div>
+          </div>
+        </div><span class="reals" *ngIf="objectKeys(user_items).length > 0">
+          <div class="item-box item-select {{ user_items[item_id].price === 0 ? 'item-not-accepted' : ''}}" *ngFor="let item_id of objectKeys(user_items)" title="{{ user_items[item_id].full_name }}" (click)="select_item(item_id)" [attr.tooltip]="user_items[item_id].full_name" flow="down">
+          <div class="item-img">
+            <img src="https://steamcommunity-a.akamaihd.net/economy/image/{{ user_items[item_id].image }}" style="height: 40px;margin-left: -5px;">
+          </div>
+          <div class="item-info">
+            <span class="item-name">{{ user_items[item_id].name }}</span>
+            <br>
+            <span class="item-ext" *ngIf="user_items[item_id].price === 0" style="color: red">Not Accepted</span>
+            <span class="item-ext" *ngIf="user_items[item_id].price > 0"><i class="fa fa-diamond"></i> {{ user_items[item_id].price.toFixed(2) }}</span>
+          </div>
+        </div>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="deposit-right">
+    <div class="panel panel-default text-left fw-4" style="vertical-align:top">
+      <div>
+        <div class="box-padded-header">
+          <div class="semi-bold box-header" style="margin: 0 20px;padding-bottom: 1px;padding-top: 20px;">
+            <span class="very-bold">Deposit Items</span>
+          </div>
+        </div>
+      </div>
+      <div class="ostyle">
+        <div id="right-text" style="display:block;margin-top:40px;font-size:20px;font-weight: 700;color:#616161;text-align:center;width:450px;" *ngIf="objectKeys(selected_items).length <= 0">
+          CLICK ON THE ITEMS TO DEPOSIT<br>
+          <strong style="font-weight:bold;font-size:13px;">YOU WILL CONVERT YOUR ITEMS TO EMERALDS</strong>
+        </div>
+        <div class="slot-group noselect" id="right" *ngIf="objectKeys(selected_items).length > 0">
+          <span class="reals">
+            <div class="item-box item-select" *ngFor="let item_id of objectKeys(selected_items)" title="{{ selected_items[item_id].full_name }}" (click)="unselect_item(item_id)">
+          <div class="item-img">
+            <img src="https://steamcommunity-a.akamaihd.net/economy/image/{{ selected_items[item_id].image }}" style="height: 40px;margin-left: -5px;">
+          </div>
+          <div class="item-info">
+            <span class="item-name">{{ selected_items[item_id].name }}</span><br>
+            <span class="item-ext"><i class="fa fa-diamond"></i> {{ selected_items[item_id].price.toFixed(2) }}</span>
+          </div>
+        </div>
+          </span>
+        </div>
+      </div>
+      <button class="inp-mm" style=" width: 70%; margin-top: 0px;" (click)="deposit_items()" *ngIf="objectKeys(selected_items).length > 0"><i class="fa fa-refresh fa-spin" *ngIf="depositing"></i><span *ngIf="!depositing">Deposit<span style="background: #00AD34;border-radius: 6px;padding: 5px;margin-left: 10px;"><i class="fa fa-diamond"></i> {{ total_price.toFixed(2) }}</span></span></button>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="OfferSent">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="box-header pull-left" style="border-bottom-color: #3EEA6F; margin: 0 auto; display: block; width: 105px; margin-bottom: 20px; float: none !important;">
+          <span class="">Offer</span> <span class="">Sent</span>
+        </div>
+        <div class="offer-dialog">
+          <div class="mmodal-center">
+            <p class="offer_text">The Trade offer has been sent to your steam account with code</p>
+            <p class="offer_code">{{ this.offer_code }}</p>
+            <p class="offer_sum"><i class="fa fa-diamond" style="margin-right: 5px;"></i>{{ this.total_price }}</p>
+          </div>
+          <div class="clear-modal"></div>
+          <button class="inp-mm" id="accept_url" (click)="open_offer_on_browser(offer_id)" target="_blank" type="submit">Open in browser</button>
+          <button class="inp-mm" id="accept_steam" (click)="open_offer_on_steam(offer_id)" type="submit">Open in steam</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

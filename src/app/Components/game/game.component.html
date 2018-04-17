@@ -1,0 +1,55 @@
+<div class="coinflip-game-cont" style="display: block;">
+  <div id="coinflip" class="game-cf-cont" *ngIf="get_game == true">
+    <div style="float:left;width:400px;">
+      <img id="p_{{ game.player1.side }}" class="p1side" src="img/{{ game.player1.side !== 'counter-terrorist' ? 'terrorist' : 'counter-terrorist' }}.png">
+      <div class="player-card">
+        <span class="p1left">
+          <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ game.player1.avatar }}" height="30" class="p1avatar"> {{ game.player1.name | truncate : 20 : '.' }}
+        </span>
+        <span class="p1money">
+          <i class="fa fa-diamond" style="margin-right: 5px;color: #2ECC71;"></i>{{ game.amount }}
+        </span>
+      </div>
+    </div>
+    <div style="float:right;width:400px;">
+      <img id="p_{{ game.player1.side === 'counter-terrorist' ? 'terrorist' : 'counter-terrorist' }}" class="p2side" src="img/{{ game.player1.side === 'counter-terrorist' ? 'terrorist' : 'counter-terrorist' }}.png">
+      <div class="player-card">
+        <span class="p1left" style="padding-left:10px">
+          <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/{{ game.player2 !== null ? game.player2.avatar : 'c5/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb.jpg' }}" height="30" class="p1avatar">{{ game.player2 !== null ? (game.player2.name | truncate : 20 : '.') : 'No Player' }}
+        </span>
+        <span class="p1money">
+          <i class="fa fa-diamond" style="margin-right: 5px;color: #2ECC71;"></i>{{ game.amount }}
+        </span>
+      </div>
+    </div>
+    <div class="waiting" style="font-size: 14px;">Waiting...</div>
+    <div class="vstext">VS</div>
+  </div>
+  <div class="coin_flip">
+    <img id="fliping_coin" style="width: 300px;margin-top: -108px;margin-left: -105px;display: none;" [src]="coin">
+  </div>
+  <div class="hash_info" *ngIf="get_game == true">Game Hash: {{ game.hash }}<br>{{ winner === true ? 'Salt: ' + winner_salt + ' Ticket: ' + winner_ticket : '' }}</div>
+<div class="modal fade" id="wonGame">
+  <div class="modal-dialog">
+    <div class="modal-content"
+         style="border-radius: 8px;width: 348px;margin: 0 auto;margin-top: 50%;">
+      <div class="modal-body" style="border-radius: 5px;">
+        <div class="box-header pull-left"
+             style="border-bottom-color: #3EEA6F;margin: 0 auto;display: block;width: 157px;float: none !important;margin-top: -72px;">
+          <span class="">Congratulations</span>
+        </div>
+        <div style="margin-top:20px;text-align: center;padding-top: 20px;">
+          CSGOWizard would like to congratulate you on winning the coin flip!
+          <br>
+          <br>
+          We've credited <i class="fa fa-diamond"></i> <b id="winner_sum">28.06</b>
+          to your CSGOWizard account.
+          <br>
+          <br>
+          You can use your emeralds to withdraw skins in the
+          <a routerLink="Shop">CSGOWizard skin store here.</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
